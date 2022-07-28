@@ -8,6 +8,20 @@ function computerPlay() {
 function playRound(playerSelection, computerSelection) {
     playerSelection = playerSelection.toLowerCase();
     const result = decideWin(playerSelection, computerSelection);
+    updateScoreboard(result);
+
+    if (pScore == 5) {
+        setTimeout(() => {
+            alert("Player has won! Resetting game...");
+            refresh();
+        }, 250);
+    } else if (cScore == 5) {
+        setTimeout(() => {
+            alert("Computer has won! Resetting game...");
+            refresh();
+        }, 250);
+    }
+
     return result == 0
     ? `Player Wins! Player chose ${playerSelection}, Computer chose ${computerSelection}`
     : result == 1
@@ -19,38 +33,81 @@ function playRound(playerSelection, computerSelection) {
 // If player loses, return 1.
 // If player ties, return 2.
 function decideWin(playerSelection, computerSelection) {
-    if (playerSelection === computerSelection) return 2;
+    if (playerSelection === computerSelection) {
+        result.textContent = "TIE!"
+        return 2;
+    }
     if (playerSelection == "rock") {
         if (computerSelection == "scissors") {
+            result.textContent = "YOU WIN!"
             return 0;
         }
     } else if (playerSelection == "paper") {
-        if (computerSelection == "stone") {
+        if (computerSelection == "rock") {
+            result.textContent = "YOU WIN!"
             return 0;
         }
     } else {
         if (computerSelection == "paper") {
+            result.textContent = "YOU WIN!"
             return 0;
         }
     }
+    result.textContent = "YOU LOSE!"
     return 1;
 }
 
-function game() {
-    for (let i = 0; i < 5; i++) {
-        let playerSelection;
-        let isValid = false;
-        while (!isValid) {
-            playerSelection = prompt("Rock, Paper, or Scissors?");
-            if (moves.includes(playerSelection.toLowerCase()) == true) {
-                isValid = true;
-            } else {
-                isValid = false;
-            }
-        }
-        const computerSelection = computerPlay();
-        console.log(playRound(playerSelection, computerSelection));
+const rockButton = document.querySelector(".rock");
+const paperButton = document.querySelector(".paper");
+const scissorsButton = document.querySelector(".scissors");
+let playerSelection;
+
+rockButton.addEventListener('click', () => {
+    playerSelection = "rock";
+    console.log(playRound(playerSelection, computerPlay()));
+});
+
+paperButton.addEventListener('click', () => {
+    playerSelection = "paper";
+    console.log(playRound(playerSelection, computerPlay()));
+});
+
+scissorsButton.addEventListener('click', () => {
+    playerSelection = "scissors";
+    console.log(playRound(playerSelection, computerPlay()));
+});
+
+const playerScore = document.querySelector(".playerScore");
+const computerScore = document.querySelector(".computerScore");
+const result = document.querySelector(".result");
+
+let pScore = 0;
+let cScore = 0;
+
+// If player wins, return 0.
+// If player loses, return 1.
+// If player ties, return 2.
+function updateScoreboard(result) {
+    switch(result) {
+        case 0:
+            pScore++;
+            playerScore.textContent = pScore;
+            break;
+        case 1:
+            cScore++;
+            computerScore.textContent = cScore;
+            break;
+        case 2:
+            break;
+        default:
+            console.log("Wonky results!");            
     }
 }
 
-game();
+function refresh() {
+    pScore = 0;
+    cScore = 0;
+    playerScore.textContent = pScore;
+    computerScore.textContent = cScore;
+    result.textContent = "";
+}
